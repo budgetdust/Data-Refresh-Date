@@ -1,0 +1,11 @@
+let
+    Source = DateTime.LocalNow(),
+    #"Converted to Table" = #table(1, {{Source}}),
+    #"Duplicated - Date Column" = Table.DuplicateColumn(#"Converted to Table", "Column1", "Date"),
+    #"Duplicated - Time Column" = Table.DuplicateColumn(#"Duplicated - Date Column", "Column1", "Time"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated - Time Column",{{"Column1", "Date Time"}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Date Time", type datetime}}),
+    #"Extracted Date" = Table.TransformColumns(#"Changed Type",{{"Date", DateTime.Date, type date}}),
+    #"Extracted Time" = Table.TransformColumns(#"Extracted Date",{{"Time", DateTime.Time, type time}})
+in
+    #"Extracted Time"
